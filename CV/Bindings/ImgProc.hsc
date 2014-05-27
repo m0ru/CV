@@ -148,6 +148,7 @@ copyMakeBorder i t b l r border value =
 #ccall cvCreateHist, Int -> Ptr Int -> Int -> Ptr (Ptr Float) -> Int -> IO (Ptr <CvHistogram>)
 #ccall cvReleaseHist, Ptr (Ptr <CvHistogram>) -> IO ()
 #ccall cvCalcArrHist, Ptr (Ptr <IplImage>) -> Ptr <CvHistogram> -> Int -> Ptr <CvArr> -> IO ()
+#ccall cvCompareHist, Ptr <CvHistogram> -> Ptr <CvHistogram> -> Int -> IO (CDouble)
 
 newtype Histogram = Histogram (ForeignPtr C'CvHistogram)
 creatingHistogram fun = do

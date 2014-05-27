@@ -58,6 +58,13 @@ histogram imageBins accumulate mask  = unsafePerformIO $
     (images,ds) = unzip imageBins
     c_accumulate = 0
 
+compareHistogram :: I.Histogram -> I.Histogram -> Int -> Double
+compareHistogram (I.Histogram fa) (I.Histogram fb) method = unsafePerformIO $ do
+    c_likelihood <- withForeignPtr fa $ \c_a ->
+      withForeignPtr fb $ \c_b ->
+        I.c'cvCompareHist c_a c_b method
+    return $ realToFrac c_likelihood
+
 -- getHistogramBin (I.Histogram hs) n = unsafePerformIO $ withForeignPtr hs (\h -> I.c'cvGetHistValue_1D (castPtr h) n)
 
 ---- Assume [0,1] distribution and calculate skewness
