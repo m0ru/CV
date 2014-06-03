@@ -1007,10 +1007,14 @@ resetCOI image = withMutableImage image $ \i ->
 
 getChannel :: (Enum a) => a -> Image (ChannelOf a) d -> Image GrayScale d
 getChannel no image = unsafePerformIO $ creatingImage $ do
-    let (w,h) = getSize image
+    d <- getImageDepth image
+    let (w',h') = getSize image
+        [w, h] = map fromIntegral [w', h']
     mut <- toMutable image
     setCOI no mut
-    cres <- {#call wrapCreateImage32F#} (fromIntegral w) (fromIntegral h) 1
+    cres <- case d of
+              Depth8U -> {#call wrapCreateImage8U#} w h 1
+              otherwise -> {#call wrapCreateImage32F#} w h 1
     withMutableImage mut $ \cimage ->
       {#call cvCopy#} cimage (castPtr cres) (nullPtr)
     resetCOI mut
